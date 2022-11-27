@@ -1,0 +1,67 @@
+Step1: 
+- Whether git is install or not? To check just type "git" in the terminal.
+- Here we are creating the project with python 3.8.10 version.
+- The default mongoDB connection is: "mongodb://localhost:27017", it can be found in the 'main.py' file.
+
+
+Step2:
+- Create dataset inside the mongoDB database.
+- To download the dataset from 'git' we use the command 'wget' in terminal.
+- To download the data write in the following format and hit enter:
+    wget url
+- As here it is:
+abc@4816ef265cb4:~/workspace$ wget https://raw.githubusercontent.com/avnyadav/sensor-fault-detection/main/aps_failure_training_set1.csv
+- After doing this the dataset gets downloaded.
+- Now we need to upload the data to mongoDB. To do this we will create the 'data_dump.py' file.
+
+
+Step3:
+- Now we will read the data from the mongoDB and do the Machine Learning project.
+- But before we need to add this codes in the github using git commands.
+- So go to github and create a new repo. While creating repo (aps-fault-detection) just select Add.gitignore option as 'python'.
+- 1st we need to see is there any repositore already attach to this code or not? to check type the following command
+    git remote -v
+
+abc@4816ef265cb4:~/workspace$ git remote -v
+origin  https://github.com/iNeuron-Pvt-Ltd/neurolab-mongodb-python (fetch)
+origin  https://github.com/iNeuron-Pvt-Ltd/neurolab-mongodb-python (push)
+
+- Now to remove the origin so we can create our own repo as origin type:
+    git remote remove origin
+- Again to check just type:
+    git remote -v
+
+abc@4816ef265cb4:~/workspace$ git remote remove origin
+abc@4816ef265cb4:~/workspace$ git remote -v
+
+- Now we need to add our repo as origin type:
+    git remote add origin <give your url>
+
+abc@4816ef265cb4:~/workspace$ git remote add origin https://github.com/Arunava-Biswas/aps-fault-detection.git
+abc@4816ef265cb4:~/workspace$ git remote -v
+origin  https://github.com/Arunava-Biswas/aps-fault-detection.git (fetch)
+origin  https://github.com/Arunava-Biswas/aps-fault-detection.git (push)
+
+- Now we need to push the changes to make the changes applicable. Here do the authentication steps to allow the repo to joined with this project. type:
+    git push origin main
+
+- Here we will get some error message, as there are changes ('.gitignore' file) in the github repo which are not shown here on this project so to make them one first we have to fetch (pull the changes from the github to the local system) the repo here then create the commit and then do the push. This is the 'merge conflict'.
+
+- So either we need to delete the commits in the github repo or we need to delete the commits in our local system as the problem is that the commits are not matching. Here we are deleting the commits in the local repo.
+- Go to hidden folder '.git'
+
+abc@4816ef265cb4:~/workspace$ ls -a
+.  ..  aps_failure_training_set1.csv  data_dump.py  .git  main.py  README.md  requirements.txt  steps.txt  .vscode
+
+- Now go to inside the '.git' folder
+
+abc@4816ef265cb4:~/workspace$ cd .git/
+abc@4816ef265cb4:~/workspace/.git$ ls
+branches  config  description  FETCH_HEAD  HEAD  hooks  index  info  logs  objects  ORIG_HEAD  packed-refs  refs
+
+- We need to use the following command:
+    git reset --soft ID
+- The ID is the id of the commit where we want the pointer HEAD to move.
+- With soft the codes remained.
+
+abc@4816ef265cb4:~/workspace$ git reset --soft 6afd
