@@ -132,5 +132,80 @@ Step4
 - Because of some specific files in the 'sensor' folder the find_packages() is able to identify as the Python package. This specific file is '__init__.py'
 - So any folder contains the file '__init__.py', the 'find_packages()' will consider that folder as the Python package/library.
 - Every source code requires some other libraries, so to specify the other libraries for the project we define them with 'get_requirements()'
-- Here in the requirements.txt file we have used a '-e .' at the end. The usage of this is to trigger the codes in the 'setup.py' file. So this '-e .' is very important if our source code is to be used as library.
+- Here in the requirements.txt file we have used a '-e .' at the end. The usage of this is to trigger the codes in the 'setup.py' file. So this '-e .' is very important if our source code is to be used as library. So after this if we install the requirements we will see that now the sensor libray also gets installed.
 - Here 'e' means editable installation and '.' is to direct to the current directory.
+- Now if we install all the libraries from 'requirements.txt' we will find a new folder got created named 'sensor.egg-info'. This folder contains all the information and dependencies of the project.
+- This '.egg-info' file got created due to the '-e .' This makes the code we are writing also using as a library.
+
+
+
+
+Step5:
+- Now we will go with the ML Project's pipeline, i.e. Data Ingestion -> Data Validation -> Data Transformation -> Model Trainer -> Model Evaluation -> Model Pusher
+- Here through the jupyter notebook we came to know that the 'XGBoost' is the best model to apply here. So we will build our model on that algorithm.
+- Check the flow from here https://www.tensorflow.org/tfx
+- An 'Artifact' is a machine learning term that describes the output(a fully trained model, a model checkpoint or a file) created by the training process. 
+- Building the pipeline:
+    -  So in this project every output we get from the training pipeline will be called as 'Artifact' and every input will be termed as 'Configuration'.
+
+
+
+Step6:
+- In the Sensor folder we will create folders named 'components', 'pipeline', 'utils' and 'entity'.
+- Each of these folders will have '__init__.py' files so we can convert this folder as a package.
+- The 'entity' folder will hold the 'Artifact' and 'Configuration'. So in this folder the inputs and outputs will be categorized. So this will work as a structure for all the inputs and outputs for all the components and the training pipeline of the project.
+- The utils folder will have all the helper functions like uploading the model to a cloud, saving the model etc.
+
+
+
+
+Step7:
+- Now let's start defining the inputs. Now for each component there will be some inputs. So now we need to define the inputs for each component and then the outputs for each components.
+- So we will create two files in the 'entity' folder named 'config_entity.py' (for inputs) and 'artifact_entity.py' (for outputs).
+- Here we will create 6 inputs (configurations) as there are 6 stages in the training pipeline. Also we need to create 6 Artifacts also in the 'artifact_entity.py' file.
+- Now we need to create 6 components in the components folder.
+- Also create a file for training named 'training_pipeline.py' in the pipeline folder.
+- There are also two other files named 'exception' and 'logger' which are universal in any project.
+- In 'logger.py' we are going to store the logging data for any user.
+- In 'exception.py' we are going to put the exception messages.
+- Now in 'main.py' make the necessary changes.
+- Now we need to write a code so we can get the code from the mongoDB database. For this we will write it in the utils __init__.py file.
+- To store the connection related codes in the 'config.py' file. Here to get the urls dynamically need to create another '.env' file and store the url there.
+- Also we need to add the load_dotenv module in the root '__init__.py' file of the sensor project. So the model will read directly with the environment variables we defined in the .env file.
+- Before making the changes the 'main.py' has the following code:
+
+import pymongo
+
+# Provide the mongodb localhost url to connect python to mongodb.
+client = pymongo.MongoClient("mongodb://localhost:27017/neurolabDB")
+
+# Database Name
+dataBase = client["neurolabDB"]
+
+# Collection  Name
+collection = dataBase['Products']
+
+# Sample data
+d = {'companyName': 'iNeuron',
+     'product': 'Affordable AI',
+     'courseOffered': 'Machine Learning with Deployment'}
+
+# Insert above records in the collection
+rec = collection.insert_one(d)
+
+# Lets Verify all the record at once present in the record with all the fields
+all_record = collection.find()
+
+# Printing all records present in the collection
+for idx, record in enumerate(all_record):
+     print(f"{idx}: {record}")
+
+
+
+
+
+Step8:
+- Now we will create the artifact directories in the config_entity file.
+- So when the code get run an artifact directory will be created and inside that there will be another folder with time stamp and inside that anothe folder for data ingestion and so on.
+- Also there now we can create train and test file but before that we need to give the location where we can store the mongoDB database as "feature_store_file_path". The train and test file both are staying inside 'dataset' folder.
+- Now write the code of data ingestion in the component folder. This will store the data so now we can perform the model training from these datasets.
