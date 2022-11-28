@@ -133,3 +133,4 @@ Step4
 - So any folder contains the file '__init__.py', the 'find_packages()' will consider that folder as the Python package/library.
 - Every source code requires some other libraries, so to specify the other libraries for the project we define them with 'get_requirements()'
 - Here in the requirements.txt file we have used a '-e .' at the end. The usage of this is to trigger the codes in the 'setup.py' file. So this '-e .' is very important if our source code is to be used as library.
+- Here 'e' means editable installation and '.' is to direct to the current directory.
