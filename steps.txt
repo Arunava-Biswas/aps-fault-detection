@@ -65,3 +65,48 @@ branches  config  description  FETCH_HEAD  HEAD  hooks  index  info  logs  objec
 - With soft the codes remained.
 
 abc@4816ef265cb4:~/workspace$ git reset --soft 6afd
+
+- Now we can create a new commit and push it to the repository.
+
+abc@4816ef265cb4:~/workspace$ git add .
+abc@4816ef265cb4:~/workspace$ git status
+On branch main
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        new file:   .vscode/extensions.json
+        new file:   .vscode/settings.json
+        new file:   .vscode/tasks.json
+        modified:   README.md
+        new file:   aps_failure_training_set1.csv
+        new file:   data_dump.py
+        new file:   main.py
+        new file:   requirements.txt
+        new file:   steps.txt
+
+abc@4816ef265cb4:~/workspace$ git config --global user.email arunavabiswas44@gmail.com
+abc@4816ef265cb4:~/workspace$ git config --global user.name Arunava-Biswas
+abc@4816ef265cb4:~/workspace$ git commit -m "This is the 1st version of code"
+[main d0ef23e] This is the 1st version of code
+ 9 files changed, 36358 insertions(+), 1 deletion(-)
+ create mode 100644 .vscode/extensions.json
+ create mode 100644 .vscode/settings.json
+ create mode 100644 .vscode/tasks.json
+ create mode 100644 aps_failure_training_set1.csv
+ create mode 100644 data_dump.py
+ create mode 100644 main.py
+ create mode 100644 requirements.txt
+ create mode 100644 steps.txt
+
+ - Here we need to push forcefully
+ abc@4816ef265cb4:~/workspace$ git push -f origin main
+Enumerating objects: 15, done.
+Counting objects: 100% (15/15), done.
+Delta compression using up to 64 threads
+Compressing objects: 100% (12/12), done.
+Writing objects: 100% (15/15), 10.23 MiB | 2.14 MiB/s, done.
+Total 15 (delta 0), reused 0 (delta 0)
+To https://github.com/Arunava-Biswas/aps-fault-detection.git
+ + 728b447...d0ef23e main -> main (forced update)
+abc@4816ef265cb4:~/workspace$ 
+
+- Now create a file '.gitignore'
