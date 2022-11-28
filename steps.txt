@@ -110,3 +110,7 @@ To https://github.com/Arunava-Biswas/aps-fault-detection.git
 abc@4816ef265cb4:~/workspace$ 
 
 - Now create a file '.gitignore'
+- Then again add, commit and push this to the github repo.
+- The usage of ".gitignore":
+    - In the source folder may be there are files which we don't want git to track, i.e. we want to prevent git from tracking those files and folders. We put those files and folders in this file.
+    - Also we can prevent a very large file from getting uploaded to github by this method.
