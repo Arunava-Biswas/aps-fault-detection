@@ -4,6 +4,9 @@ Step1:
 - The default mongoDB connection is: "mongodb://localhost:27017", it can be found in the 'main.py' file.
 
 
+
+
+
 Step2:
 - Create dataset inside the mongoDB database.
 - To download the dataset from 'git' we use the command 'wget' in terminal.
@@ -13,6 +16,9 @@ Step2:
 abc@4816ef265cb4:~/workspace$ wget https://raw.githubusercontent.com/avnyadav/sensor-fault-detection/main/aps_failure_training_set1.csv
 - After doing this the dataset gets downloaded.
 - Now we need to upload the data to mongoDB. To do this we will create the 'data_dump.py' file.
+
+
+
 
 
 Step3:
@@ -114,3 +120,15 @@ abc@4816ef265cb4:~/workspace$
 - The usage of ".gitignore":
     - In the source folder may be there are files which we don't want git to track, i.e. we want to prevent git from tracking those files and folders. We put those files and folders in this file.
     - Also we can prevent a very large file from getting uploaded to github by this method.
+
+
+
+
+
+Step4
+- To start a Python project the first file to be created is the 'setup.py' file.
+- This 'setup.py' file is important so later we can convert our source code into library format to use it elsewhere. Example we install Pandas package to use different modules from it. So the main usage of this file is to ensure the distribution of the source code.
+- Now we can create a folder here named 'sensor' inside which all the source codes will be available. So this 'sensor' folder is the Python package that we described in the setup section of the 'setup.py' file.
+- Because of some specific files in the 'sensor' folder the find_packages() is able to identify as the Python package. This specific file is '__init__.py'
+- So any folder contains the file '__init__.py', the 'find_packages()' will consider that folder as the Python package/library.
+- Every source code requires some other libraries, so to specify the other libraries for the project we define them with 'get_requirements()'
