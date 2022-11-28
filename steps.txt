@@ -132,3 +132,4 @@ Step4
 - Because of some specific files in the 'sensor' folder the find_packages() is able to identify as the Python package. This specific file is '__init__.py'
 - So any folder contains the file '__init__.py', the 'find_packages()' will consider that folder as the Python package/library.
 - Every source code requires some other libraries, so to specify the other libraries for the project we define them with 'get_requirements()'
+- Here in the requirements.txt file we have used a '-e .' at the end. The usage of this is to trigger the codes in the 'setup.py' file. So this '-e .' is very important if our source code is to be used as library.
