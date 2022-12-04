@@ -209,6 +209,24 @@ Step8:
 - So when the code get run an artifact directory will be created and inside that there will be another folder with time stamp and inside that anothe folder for data ingestion and so on.
 - Also there now we can create train and test file but before that we need to give the location where we can store the mongoDB database as "feature_store_file_path". The train and test file both are staying inside 'dataset' folder.
 - Now write the code of data ingestion in the component folder. This will store the data so now we can perform the model training from these datasets.
+- Also write the code for class for data ingestion in the 'config_entity.py' and 'artifact_entity.py' files.
 
 - Remember to load the the dataset into artifact folder eachtime when we start the vscode we need to first connect with mongoDB using clicking the connect mongoDB option in the mongoDB icon, then dump the data into the database using "python data_dump.py" then we need to run the main.py file using "python main.py". Also we need to install the pandas as it is not there in the requirements.txt file.
 - Or we can add the "pandas==1.5.2" in the requirements.txt file.
+- Also now we can rename the '__init__.py' file inside the utils folder as utils.py and keep it in the main workspace, i.e. no need to have any utils folder.
+
+
+
+
+Step9:
+- Let's start the validation of the data. To validate the data we need to match the number of features, their data types and their names.
+- Here we will use the base .csv file (i.e. aps_failure_training_set1) to validate the train and test file we created. Here we will validate the data with respect to number of features, data types and the column names.
+- To validate the data we will use the 'ks_2samp' from the 'scipy' library.
+- Here we will compare between the train and test file with the base file to check whether the columns belong to same distribution or not. If the distribution is not matched we call that condition as 'DRIFT'.
+- Now we will write code in the class related to transformation in the 'config_entity.py' and 'artifact_entity.py' files also we need to write code in the data_validation.py file in the component folder.
+
+
+
+
+Step10:
+- Doing same steps as above for the transformation of data.
