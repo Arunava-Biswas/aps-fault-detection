@@ -209,3 +209,6 @@ Step8:
 - So when the code get run an artifact directory will be created and inside that there will be another folder with time stamp and inside that anothe folder for data ingestion and so on.
 - Also there now we can create train and test file but before that we need to give the location where we can store the mongoDB database as "feature_store_file_path". The train and test file both are staying inside 'dataset' folder.
 - Now write the code of data ingestion in the component folder. This will store the data so now we can perform the model training from these datasets.
+
+- Remember to load the the dataset into artifact folder eachtime when we start the vscode we need to first connect with mongoDB using clicking the connect mongoDB option in the mongoDB icon, then dump the data into the database using "python data_dump.py" then we need to run the main.py file using "python main.py". Also we need to install the pandas as it is not there in the requirements.txt file.
+- Or we can add the "pandas==1.5.2" in the requirements.txt file.
