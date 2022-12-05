@@ -10,7 +10,8 @@ from sklearn.metrics import f1_score
 
 class ModelTrainer:
 
-
+    # model_trainer_config: the path of the ModelTrainerConfig class
+    # data_transformation_artifact: the path of the transformed data
     def __init__(self,model_trainer_config:config_entity.ModelTrainerConfig,
                 data_transformation_artifact:artifact_entity.DataTransformationArtifact
                 ):
@@ -21,15 +22,17 @@ class ModelTrainer:
         except Exception as e:
             raise SensorException(e, sys)
 
+    # Function for Hyper Parameter tuning
     def fine_tune(self):
         try:
-            #Wite code for Grid Search CV
+            #Write code for Grid Search CV
             pass
             
 
         except Exception as e:
             raise SensorException(e, sys)
 
+    # Creating function to train the model with XGBoost Classifier algorithm
     def train_model(self,x,y):
         try:
             xgb_clf =  XGBClassifier()
@@ -39,6 +42,7 @@ class ModelTrainer:
             raise SensorException(e, sys)
 
 
+    # Here we are training the model
     def initiate_model_trainer(self,)->artifact_entity.ModelTrainerArtifact:
         try:
             logging.info(f"Loading train and test array.")
@@ -46,6 +50,7 @@ class ModelTrainer:
             test_arr = utils.load_numpy_array_data(file_path=self.data_transformation_artifact.transformed_test_path)
 
             logging.info(f"Splitting input and target feature from both train and test arr.")
+            # Here only the last column will be the output column so we are using -1
             x_train,y_train = train_arr[:,:-1],train_arr[:,-1]
             x_test,y_test = test_arr[:,:-1],test_arr[:,-1]
 
@@ -59,29 +64,36 @@ class ModelTrainer:
             logging.info(f"Calculating f1 test score")
             yhat_test = model.predict(x_test)
             f1_test_score  =f1_score(y_true=y_test, y_pred=yhat_test)
-            
-            logging.info(f"train score:{f1_train_score} and tests score {f1_test_score}")
-            #check for overfitting or underfiiting or expected score
+
+
+            # check for overfitting or underfiiting or expected score
+            logging.info(f"F1 train score:{f1_train_score} and F1 test score {f1_test_score}")
             logging.info(f"Checking if our model is underfitting or not")
+            # if the score we get is less than the expected score, i.e. handling the underfitting condition
             if f1_test_score<self.model_trainer_config.expected_score:
                 raise Exception(f"Model is not good as it is not able to give \
                 expected accuracy: {self.model_trainer_config.expected_score}: model actual score: {f1_test_score}")
 
+            # Now checking for overfitting condition
+            # The difference between the f1 scores of train and test must be very less
             logging.info(f"Checking if our model is overfiiting or not")
-            diff = abs(f1_train_score-f1_test_score)
+            diff = abs(f1_train_score - f1_test_score)
 
             if diff>self.model_trainer_config.overfitting_threshold:
                 raise Exception(f"Train and test score diff: {diff} is more than overfitting threshold {self.model_trainer_config.overfitting_threshold}")
 
-            #save the trained model
-            logging.info(f"Saving mode object")
+            # save the trained model
+            logging.info(f"Saving model object")
             utils.save_object(file_path=self.model_trainer_config.model_path, obj=model)
 
-            #prepare artifact
+            # prepare artifact
             logging.info(f"Prepare the artifact")
             model_trainer_artifact  = artifact_entity.ModelTrainerArtifact(model_path=self.model_trainer_config.model_path, 
-            f1_train_score=f1_train_score, f1_test_score=f1_test_score)
+            f1_train_score = f1_train_score, 
+            f1_test_score=f1_test_score)
+
             logging.info(f"Model trainer artifact: {model_trainer_artifact}")
             return model_trainer_artifact
+
         except Exception as e:
             raise SensorException(e, sys)

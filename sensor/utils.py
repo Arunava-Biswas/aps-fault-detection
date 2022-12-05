@@ -5,7 +5,7 @@ from sensor.config import mongo_client
 import os,sys
 import yaml
 import numpy as np
-import dill
+import dill         # The dill is used to saving and loading object to and from .pkl file (Serialization and Deserialization)
 
 # Creating function to create a dataframe from the collection in the database
 def get_collection_as_dataframe(database_name:str,collection_name:str)->pd.DataFrame:
@@ -30,6 +30,7 @@ def get_collection_as_dataframe(database_name:str,collection_name:str)->pd.DataF
     except Exception as e:
         raise SensorException(e, sys)
 
+
 # Creating yaml file for the data_validation
 def write_yaml_file(file_path,data:dict):
     try:
@@ -39,6 +40,7 @@ def write_yaml_file(file_path,data:dict):
             yaml.dump(data,file_writer)
     except Exception as e:
         raise SensorException(e, sys)
+
 
 # Creating function to data type conversion for all the columns to float
 # exclude_columns: columns we don't want to convert their data type
@@ -52,6 +54,7 @@ def convert_columns_float(df:pd.DataFrame,exclude_columns:list)->pd.DataFrame:
         raise e
 
 
+# Function for saving an object to a location
 def save_object(file_path: str, obj: object) -> None:
     try:
         logging.info("Entered the save_object method of utils")
@@ -63,6 +66,7 @@ def save_object(file_path: str, obj: object) -> None:
         raise SensorException(e, sys) from e
 
 
+# Function for loading an object from a location
 def load_object(file_path: str, ) -> object:
     try:
         if not os.path.exists(file_path):
@@ -72,6 +76,8 @@ def load_object(file_path: str, ) -> object:
     except Exception as e:
         raise SensorException(e, sys) from e
 
+
+# Function to save numpy array as a file
 def save_numpy_array_data(file_path: str, array: np.array):
     """
     Save numpy array data to file
@@ -86,6 +92,8 @@ def save_numpy_array_data(file_path: str, array: np.array):
     except Exception as e:
         raise SensorException(e, sys) from e
 
+
+# Function to load the file into an array format
 def load_numpy_array_data(file_path: str) -> np.array:
     """
     load numpy array data from file

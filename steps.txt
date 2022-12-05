@@ -229,4 +229,28 @@ Step9:
 
 
 Step10:
-- Doing same steps as above for the transformation of data.
+- Doing same steps as above for the transformation of data. It is same as Data Preprocessing.
+- Here we will use the SMOTE as the data is imbalanced. Here we will increase the record of the minority class to make them equal.
+- Then we will create a pipeline with SimpleImputer with strategy as 'constant' as showed in the jupyter notebook during EDA. So all the missing values in a column will be replaced by the 0 value or we can also use the 'mean'.
+- After that we will use the RobustScaler() for standardizing/scaling the data, as the data has some outliers.
+- Here we need to save 3 things:
+        - Transformed train dataset
+        - Transformed test dataset
+        - Transformation object (to use later for the prediction pipeline as there also we need to do the same transformation as we are doing here)
+
+
+
+Step11:
+- Now we will do the model training.
+- Here for classification we will look for 'F1' score.
+
+
+
+
+Step12:
+- Now we will do the model evaluation.
+- Here we will compare between the trained model with the latest model we have, so we can get the best model for production.
+- This is the continuous training, i.e. everytime it trains and find a new training model it compares that with the current model it is using and check for the best model to use for future.
+- As here we have the trained model in the 'artifact/user_folder/model_trainer/model/model.pkl' location.
+- So we need to write a code where we can maintain all the 3 files (model.pkl, transformer.pkl, target_encoder.pkl) together, so we create a new file named Predictor.py.
+- This will create a new folder named 'saved_mdel' and there it will keep all the latest models to do the comparisons.

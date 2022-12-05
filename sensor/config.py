@@ -21,5 +21,6 @@ env_var = EnvironmentVariable()
 # Creating connection with the mongoDB
 mongo_client = pymongo.MongoClient(env_var.mongo_db_url)
 
-# Getting the target column
+# Setting the target column name
+# We are setting it here so we can use this reference whenever we need and if we need to change the value we can do that only here
 TARGET_COLUMN = "class"
