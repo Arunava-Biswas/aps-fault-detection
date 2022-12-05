@@ -254,3 +254,9 @@ Step12:
 - As here we have the trained model in the 'artifact/user_folder/model_trainer/model/model.pkl' location.
 - So we need to write a code where we can maintain all the 3 files (model.pkl, transformer.pkl, target_encoder.pkl) together, so we create a new file named Predictor.py.
 - This will create a new folder named 'saved_mdel' and there it will keep all the latest models to do the comparisons.
+
+
+
+
+Step13:
+- Now creating the model evaluation.
