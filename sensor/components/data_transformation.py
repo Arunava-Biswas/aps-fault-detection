@@ -24,6 +24,7 @@ class DataTransformation:
     def __init__(self,data_transformation_config:config_entity.DataTransformationConfig,
                     data_ingestion_artifact:artifact_entity.DataIngestionArtifact):
         try:
+            logging.info(f"{'>>'*20} Data Transformation {'<<'*20}")
             self.data_transformation_config=data_transformation_config
             self.data_ingestion_artifact=data_ingestion_artifact
         except Exception as e:
@@ -83,7 +84,7 @@ class DataTransformation:
 
             # Now doing the sampling to get rid of imbalance data problem
             # Here we want to increase the minority
-            smt = SMOTETomek(sampling_strategy="minority")
+            smt = SMOTETomek(random_state=42)
 
             # balancing the training data
             logging.info(f"Before resampling in training set Input: {input_feature_train_arr.shape} Target:{target_feature_train_arr.shape}")
