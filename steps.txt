@@ -260,6 +260,38 @@ Step12:
 
 Step13:
 - Now creating the model evaluation.
+- The ModelResolver class in predictor.py file helps to save the model at a particular location and again to load that model from that location dynamically.
+- Here we need to compare between the train model and the saved model.
+- Here can be 2 cases took place:
+
+    Case1: 
+        - We don't have any model to compare in model evaluation.
+        - This will happen when we run the model prediction for the first time.
+
+    Case2:
+        - We have a model.
+        - Here we need to make a comparison between the previous model and the present model.
 
 
 
+Step14:
+- Now doing the model pusher.
+- So here we used the 'saved_models' folder containing the 3 .pkl files in a folder named as integer.
+- Also we need to create the prediction API.
+- This API will always load objects (transformer and target encoder) from the latest folder. With these it will transform any new input data and give predictions.
+- The task for model_pusher.py is to save the models inside the 'saved_models' folder.
+- At end we can sync this 'saved-model' with the AWS S3 bucket.
+
+- Right now in the ModelResolver class in predictor.py there is a bug. As of now we have created functions that will provide the locations of the model, transformer and target_encoder. But here each functions is dependent on the 'get_latest_save_dir_path()' which always increase the previous directory and returns the latest directory. So if we try to save the models, then instead of storing all 3 of them in a single folder it will save them in 3 different folders organised serially.
+- To overcome this problem we created 3 different paths in the 'model_pusher.py'file named 'transformer_path', 'model_path' and 'target_encoder_path'. After that if we save the 3 files then it will not create the previous problem. So here first we are getting the locations and then doing the save part.
+- Here when we run the code we get an error :
+Error occurred python script name [/config/workspace/sensor/components/model_evaluation.py] line number [105] error message [Current trained model is not better than previous model]
+- This is due to the usage of SMOTE where everytime it generates new data and as a result the accuracy of the new model is less than the previous one. As a result we don't get a new model in the saved_model folder and also there is no model_pusher folder in the artifact folder.
+- To overcome this we can use the randomstate as 42 in the data ingestion during train_test split, and also in data transformation in SMOTE we can pass the same random state. 
+
+
+- Now we are going to cut the entire code of the main.py file and save it in the 'training_pipeline.py' file of the pipeline folder.
+
+- Now we can import this training_pipeline in the main and run it.
+- We are also going to create another file named 'bath_prediction.py' in the pipeline folder. 
+- Here we will create a prediction directory, then reading the input files, transformers, models and then we do predictions and the results are stored as files in this folder.
