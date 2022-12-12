@@ -296,4 +296,4 @@ Error occurred python script name [/config/workspace/sensor/components/model_eva
 - We are also going to create another file named 'bath_prediction.py' in the pipeline folder. 
 - Here we will create a prediction directory, then reading the input files, transformers, models and then we do predictions and the results are stored as files in this folder.
 
-- Let's add.
+- Let's add. This is new 
