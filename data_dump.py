@@ -1,8 +1,13 @@
 import pymongo
 import pandas as pd
 import json
+from sensor.config import mongo_client
+
+print(f"Loading environment variables from .env file")
+load_dotenv()
 
 # Provide the mongodb localhost url to connect python to mongodb.
+# When we import the mongo_client then we don't need this hardcoded link anymore
 client = pymongo.MongoClient("mongodb://localhost:27017/neurolabDB")
 
 # The data path

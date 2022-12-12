@@ -296,4 +296,97 @@ Error occurred python script name [/config/workspace/sensor/components/model_eva
 - We are also going to create another file named 'bath_prediction.py' in the pipeline folder. 
 - Here we will create a prediction directory, then reading the input files, transformers, models and then we do predictions and the results are stored as files in this folder.
 
-- Let's add. This is new 
+
+
+
+
+
+
+- Now for the deployment:
+- First develop the program code.
+- Store the code in github.
+- Now to do continuous training of the code like the (training_pipeline or batch_prediction) we have to use some sort of scheduler. This is similar to the Continuous Learning.
+- Here we need to schedule the training_pipeline so it can run continuously.
+- Here we will use "Airflow" library to schedule our job. This will works as a scheduler for the training_pipeline and batch_prediction.
+- In case we have a python source code to deploy we need to follow the following steps:
+    - Create Python environment.
+    - Install the dependencies.
+    - Run the Script.
+
+- But these steps are dependent on the machine we are using, so we need to make the deployment independent of these machines, for this we have DOCKER.
+- By using DOCKER we can package the code and move from one place to another.
+- In Docker we need to follow the following steps:
+    - Choose a Base machine (independent of local machine).
+    - Copy code from local system to Docker machine.
+    - Install dependencies.
+    - Run the script.
+    - Create the Docker image.
+    - Then run the image.
+
+
+- Deployment steps:
+    1. Create a DOCKER image.
+    2. Run the DOCKER image.
+
+
+- Github:
+    - Clone Source code.
+    - Build DOCKER image.
+    - Store the image (Elastic Container Registry in AWS) [ECR: Docker image storage]
+    
+- Now we will run the image in EC2 (Elastic Compute Cloud). For this we need to first download the image and then run the image.
+- And the deployment is done.
+
+- Now mongoDB is not accessible in EC2. To do this we need to use the mongoDB Atlas.
+
+Step1: Get MongoDB Atlas url.
+Step2: Connect with the url (to check whether the connection is happened or not).
+Step3: Change the url in the .env file.
+Step4: Run the data_dump.py file to insert the data inside the Atlas. To do this we can import the MongoClient in data_dump.py file.
+Step5: Create a Docker file. To do this just name the new file as "Dockerfile" and that file will become a Docker File.
+- Follow the steps in the Dockerfile:
+        # base image
+        FROM python:3.8
+        # make ourselves as root user
+        USER root
+        # create a folder as '/app' to copy the code
+        RUN mkdir /app
+        # copy source code from this directory to the '/app' folder
+        COPY . /app/
+        # setting the working directory to the '/app' location
+        WORKDIR /app/
+        # now installing the dependencies
+        RUN pip3 install -r requirements.txt
+
+        # setting environment variables for Air flow
+        # Setting the home variable for airflow i.e. where the airflow code will be written
+        ENV AIRFLOW_HOME="/app/airflow"
+        # to load how much time it should wait
+        ENV AIRFLOW__CORE__DAGBAG_IMPORT_TIMEOUT=1000
+        ENV AIRFLOW__CORE__ENABLE_XCOM_PICKLING=True
+
+        # Commands related to airflow
+        # initializing the airflow database
+        RUN airflow db init 
+        # creating an user to login to the airflow portal
+        # syntax is:
+        # RUN airflow users create  -e <email> -f <fname> -l <lname> -p <password> -r <role> -u <username>
+        RUN airflow users create  -e avnish@ineuron.ai -f Avnish -l Yadav -p admin -r Admin  -u admin
+
+        # Create a file named start.sh
+        # This is a script containing the shell commands
+
+        # now give permision to this script
+        RUN chmod 777 start.sh
+        # installing the awscli so we can save the folders like 'artifact', 'saved_models' inside the S3 bucket
+        RUN apt update -y && apt install awscli -y
+        # entry point to state where the cell is located
+        ENTRYPOINT [ "/bin/sh" ]
+        # to run the 'start.sh' script
+        CMD ["start.sh"]
+
+
+Step6: Create another file named 'docker-compose.yaml'. This file will be used to ensure all the names we used in the project remain same.
+Step7: Create another file named '.dockerignore', so when we build the docker image we don't need all the folders of the source code. It is similar to '.gitignore'.
+Step8: Now create another folder named 'airflow', in which we need another folder named 'dags'. Inside this we will create the 'training_pipeline.py' and 'batch_prediction.py' files. The codes inside the files can be found in airflow.
+- 'DAG' is Directed Acyclic Graph which is created in airflow.
