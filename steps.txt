@@ -390,3 +390,7 @@ Step6: Create another file named 'docker-compose.yaml'. This file will be used t
 Step7: Create another file named '.dockerignore', so when we build the docker image we don't need all the folders of the source code. It is similar to '.gitignore'.
 Step8: Now create another folder named 'airflow', in which we need another folder named 'dags'. Inside this we will create the 'training_pipeline.py' and 'batch_prediction.py' files. The codes inside the files can be found in airflow.
 - 'DAG' is Directed Acyclic Graph which is created in airflow.
+
+
+
+- Now with the deployment part:
