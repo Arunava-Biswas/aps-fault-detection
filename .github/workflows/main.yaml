@@ -1,0 +1,97 @@
+name: workflow
+
+# So whenever we push to the main branch the trigger will happen
+# i.e. if we write the push command of git, it will trigger the deployment.
+on:
+  push:
+    branches:
+      - main
+
+# setting the permissions
+permissions:
+  id-token: write
+  contents: read
+
+
+# setting the actions one by one
+jobs:
+# Creating Docker image and push it to ECR
+ build-and-push-ecr-image:
+#  giving name
+  name: Continuous Delivery
+  # giving the machine version
+  runs-on: ubuntu-latest
+  steps:
+    # checking out the code / bring the code to the ubuntu machine from github
+    # actions/checkout@v3 : copy the code and run it on the ubuntu machine we have created
+   - name: Checkout Code
+     uses: actions/checkout@v3
+    #  now installing packages after updating the machine
+   - name: Install Utilities
+     run: |
+      sudo apt-get update
+      sudo apt-get install -y jq unzip
+    # configuring AWS credentials on this ubuntu machine
+    # this will configure the AWS CLI on this machine, so now we can use the ECR
+   - name: Configure AWS credentials
+     uses: aws-actions/configure-aws-credentials@v1
+     with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws-region: ${{ secrets.AWS_REGION }}
+
+    # logging into the ECR
+   - name: Login to Amazon ECR
+     id: login-ecr
+     uses: aws-actions/amazon-ecr-login@v1
+    
+    # now we need to build and push the docker image into the ECR to save it there
+   - name: Build, tag, and push image to Amazon ECR
+     id: build-image
+     env:
+      ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
+      IMAGE_TAG: latest
+     run: |
+       # Build a docker container, the '.' means the image needs to be build only from the present directory
+       # push it to ECR to save it there
+       # deploying the ECR to ECS
+       docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+       docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+       echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" 
+
+# Now doing the continuous deployment
+ Continuous-Deployment:
+#  stating what is required here
+  needs: build-and-push-ecr-image
+  # on which machine it will run
+  runs-on: self-hosted
+  steps:
+  - name: Checkout
+    uses: actions/checkout@v3
+  
+  # configuring aws credentials and installing the softwares and login to the ECR
+  - name: Configure AWS credentials
+    uses: aws-actions/configure-aws-credentials@v1
+    with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws-region: ${{ secrets.AWS_REGION }}
+  - name: Install Utilities
+    run: |
+      sudo apt-get update
+      sudo apt-get install -y jq unzip
+  - name: Login to Amazon ECR
+    id: login-ecr
+    uses: aws-actions/amazon-ecr-login@v1
+    
+    # downloading the Docker image
+  - name: Pull docker image
+    run: |
+      docker pull ${{secrets.AWS_ECR_LOGIN_URI}}/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+  - name: Run Docker Image to serve users
+    run: |
+      export IMAGE_NAME="${{secrets.AWS_ECR_LOGIN_URI}}"/"${{ secrets.ECR_REPOSITORY_NAME }}":latest AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}" AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}" AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }} BUCKET_NAME=${{ secrets.BUCKET_NAME }} "MONGO_DB_URL=${{ secrets.MONGO_DB_URL }}" && docker compose up -d
+  - name: Docker System Prune to Remove Old Images
+    run: |
+      docker system prune -f

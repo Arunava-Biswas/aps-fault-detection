@@ -393,4 +393,5 @@ Step8: Now create another folder named 'airflow', in which we need another folde
 
 
 
-- Now with the deployment part:
+- Create another folder named '.github' and a 'workflows' folder inside that. In this folder we will write all the codes of github actions (the workflow in github i.e. the orders of actions) in a 'main.yaml' file.
+- Here we will create codes for github actions, so the code will run automatically.

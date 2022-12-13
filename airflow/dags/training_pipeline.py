@@ -18,7 +18,7 @@ with DAG(
     tags=['example'],
 ) as dag:
 
-    
+# Whenever we run the training pipeline the s3 bucket will get created and the artifacts and saved_models will save there
     def training(**kwargs):
         from sensor.pipeline.training_pipeline import start_training_pipeline
         start_training_pipeline()
@@ -34,10 +34,12 @@ with DAG(
 
     )
 
+# Syncing the data to the s3 bucket
     sync_data_to_s3 = PythonOperator(
             task_id="sync_data_to_s3",
             python_callable=sync_artifact_to_s3_bucket
 
     )
 
+# Defining the order in which the execution should take place
     training_pipeline >> sync_data_to_s3
