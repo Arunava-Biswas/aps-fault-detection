@@ -395,3 +395,95 @@ Step8: Now create another folder named 'airflow', in which we need another folde
 
 - Create another folder named '.github' and a 'workflows' folder inside that. In this folder we will write all the codes of github actions (the workflow in github i.e. the orders of actions) in a 'main.yaml' file.
 - Here we will create codes for github actions, so the code will run automatically.
+
+- Now we will need to set all the values wherever we find 'secrets' like:
+     AWS_ACCESS_KEY_ID=<Access key ID>
+     AWS_SECRET_ACCESS_KEY=<Secret access key>
+     AWS_REGION=ap-south-1
+     AWS_ECR_LOGIN_URI=<ECR url (the 1st part upto '/')>
+     ECR_REPOSITORY_NAME=<ECR repo name (the part after the '/')>
+     BUCKET_NAME=<bucket name from S3>
+     MONGO_DB_URL=<mongodb atlas url>
+
+- We need to set these many variables information.
+- Login to AWS
+- Now we need to create the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
+    - So search for IAM (Identity and Access Management) service in the search box and select the option IAM.
+    - This IAM is the service using which we can access and manage the AWS resources in AWS cloud.
+    - In the IAM dashboard we need to create an user by clicking 'Add user' and create an user, also check the box 'Access key - Programmatic access' in the 'Select AWS credential type'.
+    - Then click on 'Next: Permissions'.
+    - Now we need to attach the policy, for this select the option 'Attach existing policy directly', here we need to check box against the option 'AdministratorAccess'.
+    - Click on 'Next' and then click 'Create user'.
+    - Now it will create an user and we can download a .csv file containing the information we want.
+    - So in this file we will get the Access key ID and Secret access key.
+    - Now add these information in a notepad along with the variable names.
+    - Remember these details not to be shared with anyone. 
+
+    - Now again search for ECR (Elastic Container Registry)
+    - This is where the Docker image is going to be stored, so it can be used in the EC2 instance.
+    - Check the location in the right top side and choose 'Asia Pacific (Mumbai)' region.
+    - Here we need to create a repository to store the Docker image like we created a repository in github to store the code.
+    - Click Create Repository -> give a name -> Create repository.
+    - Now we will get the repository name and an url. Copy this url and put in the required boxes.
+
+    - Now we will create a bucket to get the bucket name.
+    - Now search S3 and choose Create Bucket option, choose Mumbai location, give a Bucket Name.
+    - Remember this Bucket Name must be universally unique (not to be used by anyone anywhere like Aadhar number) -> Create Bucket.
+
+
+- Now once all these information we get then we need to create an EC2 machine and then we can start the deployment.
+    - To create an EC2 machine search for EC2.
+    - Make sure that the region is set as Mumbai.
+    - Click instances.
+    - Click Launch instances.
+    - Give a name to the machine.
+    - Now choose a machine (here we will choose an ubuntu machine)
+    - In Key pair option select Create new Key pair -> Key pair name (give any name) -> Create key.
+    - This will download a 'ec2.pem' key.
+    - Now we can increase the HDD space in Configure storage section. Set it to 30 GB.
+    - Click 'Launch Instances'.
+
+
+- Now search the machine by clicking on instances and wait until the status becomes '2/2 checks passed'.
+- Now click on the check button next to the machine name and go to the Security tab.
+- Now in there Security -> Security Groups (click on the link inside here) -> Inbound Rules
+- Here this machine can only accept SSH requests but we will need http port, so we need to configure http for this machine.
+- Click 'Edit inbound rules' -> 'Add rule' -> Choose 'All traffic'(in Type) -> 'Anywhere-IPV4'(in Source) -> 'Save rules'.
+- Now select the new object we created.
+- Now again search the machine by clicking on instances.
+- Now click on the check button next to the machine name and click the 'Connect' button at the top.
+- In the new page 'Connect to instance' click on the 'Connect'.
+- It will take some time and then the machine will open.
+
+- Now install Docker at first here, commands are
+
+curl -fsSL https://get.docker.com -o get-docker.sh (to download the script get-docker.sh)
+ls (to check whether the script got downloaded or not)
+sudo sh get-docker.sh (to execute the downloaded file, after this docker will be installed in this machine)
+sudo usermod -aG docker ubuntu 
+newgrp docker 
+
+- As a result docker will installed to check type docker --version.
+
+- Open the github repository and open the settings(gear sign)
+- Go to the 'Actions' option select 'Runners' option there.
+- Now configure this Runners page.
+- Click 'New self-hosted runner'
+- Here we have to choose 'Linux'
+- Now run the commands given here in the Download and Configure sections in the EC2 machine one by one.
+- In Configure commands:
+    - Press Enter for first time when asking the name of the runner Group
+    - Type 'self-hosted' when again asked for name of the runner Group
+    - Press Enter (enter any additional label)
+    - Press Enter again (enter name of work folder)
+    - Now ./run.sh
+
+- it will show 'Connected to GitHub'.
+- Now go to github again and open runners and there will be a self-hosted as idle status.
+- Now go to the secrests option in the github settings and there go to Actions secrets page by selecting actions.
+- Now click 'New Repository Secret' and there in name put the key like "AWS_ACCESS_KEY_ID" and in the secrets set the values one by one for all the secrets we have collected.
+
+- Now for the final deployment:
+- go to the Actions and see whether it is working or not.
+- Add in reuirement.txt 'apache-airflow'
+- If everything go alright we will find the Docker image in the ECR. 
