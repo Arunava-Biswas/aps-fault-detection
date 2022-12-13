@@ -487,3 +487,10 @@ newgrp docker
 - go to the Actions and see whether it is working or not.
 - Add in reuirement.txt 'apache-airflow'
 - If everything go alright we will find the Docker image in the ECR. 
+
+
+- So everytime we try to run the ECR machine:
+    - Check if Runner is offline after connecting with the machine
+    - Then pass the following commands one by one:
+        cd action.runner
+        ./run.sh
